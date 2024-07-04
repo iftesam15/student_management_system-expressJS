@@ -74,11 +74,11 @@ const createStudent = async (req, res) => {
 // Update a student
 const updateStudent = async (req, res) => {
   const { id } = req.params;
-  const { first_name, last_name,date_of_birth, email } = req.body;
+  const { first_name, last_name, email } = req.body;
   try {
     const result = await pool.query(
-      "UPDATE students SET first_name = $1, last_name = $2, date_of_birth= $3, email = $4 WHERE student_id = $5 RETURNING *",
-      [first_name, last_name,date_of_birth, email, id]
+      "UPDATE students SET first_name = $1, last_name = $2,  email = $4 WHERE student_id = $5 RETURNING *",
+      [first_name, last_name, email, id]
     );
     if (result.rows.length === 0) {
       return res.status(404).json({
