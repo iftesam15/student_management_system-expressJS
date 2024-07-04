@@ -1,6 +1,8 @@
 const { Pool } = require("pg");
 require("dotenv").config();
 
+
+
 const pool = new Pool({
   host: process.env.DB_HOST,
   port: process.env.DB_PORT,
@@ -9,13 +11,20 @@ const pool = new Pool({
   database: process.env.DB_NAME,
 });
 
+class Student {
+  constructor(firstName, lastName) {
+    this.firstName = firstName;
+    this.lastName = lastName;
+  }
+}
 // Get all students
 const getStudents = async (req, res) => {
   try {
     const result = await pool.query("SELECT * FROM students");
+    const students = result.rows.map(row => new Student(row.first_name, row.last_name));
     res.status(200).json({
       status: "success",
-      data: result.rows,
+      data: students,
     });
   } catch (error) {
     res.status(500).json({
