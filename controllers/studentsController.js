@@ -23,8 +23,9 @@ const getStudents = async (req, res) => {
     const result = await pool.query("SELECT * FROM students");
     const students = result.rows.map(row => new Student(row.first_name, row.last_name));
     res.status(200).json({
-      status: "success",
-      data: students,
+      status: 'success',
+      data: result.rows,
+      message: 'Students retrieved successfully'
     });
   } catch (error) {
     res.status(500).json({
@@ -86,7 +87,7 @@ const updateStudent = async (req, res) => {
   const { first_name, last_name, email } = req.body;
   try {
     const result = await pool.query(
-      "UPDATE students SET first_name = $1, last_name = $2,  email = $4 WHERE student_id = $5 RETURNING *",
+      "UPDATE students SET first_name = $1, last_name = $2,  email = $3 WHERE student_id = $4 RETURNING *",
       [first_name, last_name, email, id]
     );
     if (result.rows.length === 0) {
