@@ -1,7 +1,7 @@
 const express = require('express');
-const { getEnrollmentsForCourse } = require('../controllers/enrollmentsController');
+const { getEnrollmentDetails } = require('../controllers/enrollmentsController');
 const router = express.Router();
 
-router.get('/:courseName', getEnrollmentsForCourse);
+router.get('/details', getEnrollmentDetails);
 
 module.exports = router;
