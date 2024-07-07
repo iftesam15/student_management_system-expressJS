@@ -18,9 +18,8 @@ const getEnrollmentDetails = async (req, res) => {
      
       CONCAT(s.first_name, ' ', s.last_name) AS student_full_name,
       c.course_name,
+      CONCAT(i.first_name,' ', i.last_name) AS instructor_full_name
      
-      i.first_name AS instructor_first_name,
-      i.last_name AS instructor_last_name
     FROM 
       enrollments e
     JOIN 
@@ -37,9 +36,17 @@ const getEnrollmentDetails = async (req, res) => {
 
   try {
     const result = await pool.query(query);
+    const enrollements = result.rows.map((row)=>{
+      return {
+        enrollment_date: row.enrollment_date,
+        student_full_name: row.student_full_name,
+        course_name: row.course_name
+        // instructor_full_name: row.instructor_full_name,
+      }
+    })
     res.status(200).json({
       status: "success",
-      data: result.rows,
+      data: enrollements,
       message: "Enrollment details retrieved successfully",
     });
   } catch (error) {
