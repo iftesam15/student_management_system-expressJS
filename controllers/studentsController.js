@@ -1,7 +1,6 @@
 const { Pool } = require("pg");
 require("dotenv").config();
-
-
+const ApiResponse = require("../Response");
 
 const pool = new Pool({
   host: process.env.DB_HOST,
@@ -17,21 +16,23 @@ class Student {
     this.lastName = lastName;
   }
 }
+
 // Get all students
 const getStudents = async (req, res) => {
   try {
     const result = await pool.query("SELECT * FROM students");
-    const students = result.rows.map(row => new Student(row.first_name, row.last_name));
-    res.status(200).json({
-      status: 'success',
-      data: result.rows,
-      message: 'Students retrieved successfully'
-    });
+    const students = result.rows.map(
+      (row) => new Student(row.first_name, row.last_name)
+    );
+    res
+      .status(200)
+      .json(
+        ApiResponse.success(result.rows, "Students retrieved successfully")
+      );
+    
   } catch (error) {
-    res.status(500).json({
-      status: "error",
-      message: error.message,
-    });
+    res.status(500).json(ApiResponse.error(500, error.message));
+   
   }
 };
 
@@ -44,20 +45,19 @@ const getStudentById = async (req, res) => {
       [id]
     );
     if (result.rows.length === 0) {
-      return res.status(404).json({
-        status: "fail",
-        message: "Student not found",
-      });
+      return res.status(404).json(ApiResponse.fail(res.statusCode, "Student not found"));
     }
-    res.status(200).json({
-      status: "success",
-      data: result.rows[0],
-    });
+    res
+      .status(200)
+      .json(
+        ApiResponse.success(
+          200,
+          result.rows[0],
+          "Student retrieved successfully"
+        )
+      );
   } catch (error) {
-    res.status(500).json({
-      status: "error",
-      message: error.message,
-    });
+    res.status(500).json(ApiResponse.error(500, error.message));
   }
 };
 
@@ -66,18 +66,16 @@ const createStudent = async (req, res) => {
   const { first_name, last_name, date_of_birth, email } = req.body;
   try {
     const result = await pool.query(
-      "INSERT INTO students (first_name, last_name,date_of_birth, email) VALUES ($1, $2, $3,$4) RETURNING *",
+      "INSERT INTO students (first_name, last_name, date_of_birth, email) VALUES ($1, $2, $3, $4) RETURNING *",
       [first_name, last_name, date_of_birth, email]
     );
-    res.status(201).json({
-      status: "success",
-      data: result.rows[0],
-    });
+    res
+      .status(201)
+      .json(
+        ApiResponse.success(201, result.rows[0], "Student created successfully")
+      );
   } catch (error) {
-    res.status(500).json({
-      status: "error",
-      message: error.message,
-    });
+    res.status(500).json(ApiResponse.error(500, error.message));
   }
 };
 
@@ -87,25 +85,19 @@ const updateStudent = async (req, res) => {
   const { first_name, last_name, email } = req.body;
   try {
     const result = await pool.query(
-      "UPDATE students SET first_name = $1, last_name = $2,  email = $3 WHERE student_id = $4 RETURNING *",
+      "UPDATE students SET first_name = $1, last_name = $2, email = $3 WHERE student_id = $4 RETURNING *",
       [first_name, last_name, email, id]
     );
     if (result.rows.length === 0) {
-      return res.status(404).json({
-        status: "fail",
-        message: "Student not found",
-      });
+      return res.status(404).json(ApiResponse.fail(404, "Student not found"));
     }
-    res.status(200).json({
-      status: "success",
-      message: "Student updated successfully",
-      data: result.rows[0],
-    });
+    res
+      .status(200)
+      .json(
+        ApiResponse.success(200, result.rows[0], "Student updated successfully")
+      );
   } catch (error) {
-    res.status(500).json({
-      status: "error",
-      message: error.message,
-    });
+    res.status(500).json(ApiResponse.error(500, error.message));
   }
 };
 
@@ -118,20 +110,13 @@ const deleteStudent = async (req, res) => {
       [id]
     );
     if (result.rows.length === 0) {
-      return res.status(404).json({
-        status: "fail",
-        message: "Student not found",
-      });
+      return res.status(404).json(ApiResponse.fail(404, "Student not found"));
     }
-    res.status(200).json({
-      status: "success",
-      message: "Student deleted successfully",
-    });
+    res
+      .status(200)
+      .json(ApiResponse.success(200, null, "Student deleted successfully"));
   } catch (error) {
-    res.status(500).json({
-      status: "error",
-      message: error.message,
-    });
+    res.status(500).json(ApiResponse.error(500, error.message));
   }
 };
 
