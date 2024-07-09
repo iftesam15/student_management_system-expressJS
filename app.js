@@ -3,6 +3,7 @@ const cors = require('cors');
 const coursesRoutes = require('./routes/coursesRoutes');
 const enrollmentsRoutes = require('./routes/enrollmentsRoutes');
 const studentsRoutes = require('./routes/studentsRoutes');
+const instructorRoutes = require('./routes/instructorRoutes');
 require('dotenv').config();
 
 const app = express();
@@ -16,6 +17,7 @@ app.use(express.json());
 app.use('/courses', coursesRoutes);
 app.use('/enrollments', enrollmentsRoutes);
 app.use('/students', studentsRoutes);
+app.use('/instructors',instructorRoutes);
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);

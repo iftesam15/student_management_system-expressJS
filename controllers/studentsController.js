@@ -98,6 +98,7 @@ const updateStudent = async (req, res) => {
     }
     res.status(200).json({
       status: "success",
+      message: "Student updated successfully",
       data: result.rows[0],
     });
   } catch (error) {
