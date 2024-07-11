@@ -12,7 +12,7 @@ const pool = new Pool({
 // Get all enrollments with details
 const getEnrollmentDetails = async (req, res) => {
   const query = `
-    SELECT 
+SELECT 
   CONCAT(students.first_name , ' ' ,students.last_name) AS student_full_name,
   enrollments.enrollment_id AS enrollment_id,
   courses.course_name,

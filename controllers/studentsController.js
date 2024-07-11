@@ -51,7 +51,6 @@ const getStudentById = async (req, res) => {
       .status(200)
       .json(
         ApiResponse.success(
-          200,
           result.rows[0],
           "Student retrieved successfully"
         )
@@ -72,10 +71,10 @@ const createStudent = async (req, res) => {
     res
       .status(201)
       .json(
-        ApiResponse.success(201, result.rows[0], "Student created successfully")
+        ApiResponse.success(result.rows[0], "Student created successfully")
       );
   } catch (error) {
-    res.status(500).json(ApiResponse.error(500, error.message));
+    res.status(500).json(ApiResponse.error(null, error.message));
   }
 };
 
@@ -89,15 +88,15 @@ const updateStudent = async (req, res) => {
       [first_name, last_name, email, id]
     );
     if (result.rows.length === 0) {
-      return res.status(404).json(ApiResponse.fail(404, "Student not found"));
+      return res.status(404).json(ApiResponse.fail(null, "Student not found"));
     }
     res
       .status(200)
       .json(
-        ApiResponse.success(200, result.rows[0], "Student updated successfully")
+        ApiResponse.success(result.rows[0], "Student updated successfully")
       );
   } catch (error) {
-    res.status(500).json(ApiResponse.error(500, error.message));
+    res.status(500).json(ApiResponse.error(null, error.message));
   }
 };
 
