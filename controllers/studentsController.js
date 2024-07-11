@@ -114,7 +114,7 @@ const deleteStudent = async (req, res) => {
     }
     res
       .status(200)
-      .json(ApiResponse.success(200, null, "Student deleted successfully"));
+      .json(ApiResponse.success(200, "Student deleted successfully"));
   } catch (error) {
     res.status(500).json(ApiResponse.error(500, error.message));
   }
