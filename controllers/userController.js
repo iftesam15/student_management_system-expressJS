@@ -105,10 +105,21 @@ const loginUser = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-const getUserInfo =async (req, res) => {
+const getUserInfo = async (req, res) => {
   await res.status(200).json({
     user: req.user,
+    token: req.token,
   });
+};
+
+const getAllUsers = async (req, res) => {
+  try {
+    const users = await pool.query("SELECT * FROM users");
+    const usersWithoutPassword = users.rows.map(({ password, ...rest }) => rest);
+    res.status(200).json(usersWithoutPassword);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 // const getUserInfoByEmail = async (req, res) => {
 //   try {
@@ -126,5 +137,6 @@ const getUserInfo =async (req, res) => {
 module.exports = {
   registerUser,
   loginUser,
-  getUserInfo
+  getUserInfo,
+  getAllUsers
 };

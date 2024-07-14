@@ -1,6 +1,6 @@
 const express = require("express");
 const { check } = require("express-validator");
-const { registerUser, loginUser, getUserInfo } = require("../controllers/userController");
+const { registerUser, loginUser, getUserInfo,getAllUsers } = require("../controllers/userController");
 const authMiddleware = require("../middlewares/auth-middleware");
 
 const router = express.Router();
@@ -28,5 +28,6 @@ router.post(
 
 // Protected route to get user info
 router.get("/me", authMiddleware, getUserInfo);
+router.get("/",authMiddleware, getAllUsers)
 
 module.exports = router;
