@@ -1,8 +1,8 @@
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
-const { validationResult } = require('express-validator');
-const { Pool } = require('pg');
-
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
+const { validationResult } = require("express-validator");
+const { Pool } = require("pg");
+const authMiddleware = require("../middlewares/auth-middleware");
 const pool = new Pool({
   host: process.env.DB_HOST,
   port: process.env.DB_PORT,
@@ -22,9 +22,12 @@ const registerUser = async (req, res) => {
 
   try {
     // Check if user already exists
-    const userExists = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+    const userExists = await pool.query(
+      "SELECT * FROM users WHERE email = $1",
+      [email]
+    );
     if (userExists.rows.length > 0) {
-      return res.status(400).json({ message: 'User already exists' });
+      return res.status(400).json({ message: "User already exists" });
     }
 
     // Hash password
@@ -32,20 +35,24 @@ const registerUser = async (req, res) => {
 
     // Insert user into database
     const newUser = await pool.query(
-      'INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING *',
+      "INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING *",
       [username, email, hashedPassword]
     );
 
-    const token = jwt.sign({ userId: newUser.rows[0].user_id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign(
+      { userId: newUser.rows[0].user_id },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
 
     res.status(201).json({
-      message: 'User registered successfully',
+      message: "User registered successfully",
       token,
       user: {
         id: newUser.rows[0].user_id,
         username: newUser.rows[0].username,
-        email: newUser.rows[0].email
-      }
+        email: newUser.rows[0].email,
+      },
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -56,45 +63,68 @@ const registerUser = async (req, res) => {
 const loginUser = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(400).json({  
-        status: "error",
-        message: errors.array()[0].msg,
- 
-     });
+    return res.status(400).json({
+      status: "error",
+      message: errors.array()[0].msg,
+    });
   }
 
   const { email, password } = req.body;
 
   try {
     // Check if user exists
-    const user = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+    const user = await pool.query("SELECT * FROM users WHERE email = $1", [
+      email,
+    ]);
     if (user.rows.length === 0) {
-      return res.status(400).json({ message: 'Invalid email or password' });
+      return res.status(400).json({ message: "Invalid email or password" });
     }
 
     // Check password
     const isMatch = await bcrypt.compare(password, user.rows[0].password);
     if (!isMatch) {
-      return res.status(400).json({ message: 'Invalid email or password' });
+      return res.status(400).json({ message: "Invalid email or password" });
     }
 
-    const token = jwt.sign({ userId: user.rows[0].user_id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign(
+      { userId: user.rows[0].user_id },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
 
     res.status(200).json({
-      message: 'User logged in successfully',
+      message: "User logged in successfully",
       token,
       user: {
         id: user.rows[0].user_id,
         username: user.rows[0].username,
-        email: user.rows[0].email
-      }
+        email: user.rows[0].email,
+      },
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
+const getUserInfo =async (req, res) => {
+  await res.status(200).json({
+    user: req.user,
+  });
+};
+// const getUserInfoByEmail = async (req, res) => {
+//   try {
+//     const user = await pool.query("SELECT * FROM users WHERE email = $1", [
+//       req.user.userId,
+//     ]);
+//     if (!user.rows[0]) {
+//       return res.status(404).json({ message: "User not found" });
+//     }
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
 
 module.exports = {
   registerUser,
-  loginUser
+  loginUser,
+  getUserInfo
 };
