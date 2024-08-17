@@ -1,7 +1,9 @@
-const express = require('express');
-const { getEnrollmentDetails } = require('../controllers/enrollmentsController');
+const express = require("express");
+const {
+  getEnrollmentDetails,
+} = require("../controllers/enrollmentsController");
 const router = express.Router();
 
-router.get('/', getEnrollmentDetails);
+router.get("/", getEnrollmentDetails);
 
 module.exports = router;

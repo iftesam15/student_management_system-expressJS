@@ -30,25 +30,24 @@ const getInstructorList = async (req, res) => {
   }
 };
 const getInstructorById = async (req, res) => {
-    const {id} =req.params;
-    try {
-        const result = await pool.query(
-            'SELECT * FROM instructors WHERE instructor_id = $1',
-            [id]
-        );
-        res.status(200).json({
-            status: "success",
-            data: result.rows[0],
-            message: "Instructor details retrieved successfully",
-        });
-    }
-    catch (error) {
-        res.status(500).json({
-            status: "error",
-            message: error.message,
-        });
-    }
-}
+  const { id } = req.params;
+  try {
+    const result = await pool.query(
+      "SELECT * FROM instructors WHERE instructor_id = $1",
+      [id]
+    );
+    res.status(200).json({
+      status: "success",
+      data: result.rows[0],
+      message: "Instructor details retrieved successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: "error",
+      message: error.message,
+    });
+  }
+};
 const createInstructor = async (req, res) => {
   const { first_name, last_name, email } = req.body;
 
@@ -122,9 +121,9 @@ const updateInstructor = async (req, res) => {
     });
   }
 };
-const deleteInstructor= async (req, res) => {
+const deleteInstructor = async (req, res) => {
   const { id } = req.params;
-  if(!id){
+  if (!id) {
     return res.status(400).json({
       status: "error",
       message: "Missing instructor ID",
@@ -148,19 +147,18 @@ const deleteInstructor= async (req, res) => {
       data: result.rows[0],
       message: "Instructor deleted successfully",
     });
-  }
-  catch(error){
+  } catch (error) {
     console.error(error);
     res.status(500).json({
       status: "error",
       message: error.message,
     });
   }
-}
-module.exports ={
-    getInstructorList,
-    getInstructorById,
-    updateInstructor,
-    createInstructor,
-    deleteInstructor
+};
+module.exports = {
+  getInstructorList,
+  getInstructorById,
+  updateInstructor,
+  createInstructor,
+  deleteInstructor,
 };
