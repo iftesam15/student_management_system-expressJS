@@ -29,10 +29,8 @@ const getStudents = async (req, res) => {
       .json(
         ApiResponse.success(result.rows, "Students retrieved successfully")
       );
-    
   } catch (error) {
     res.status(500).json(ApiResponse.error(500, error.message));
-   
   }
 };
 
@@ -45,15 +43,14 @@ const getStudentById = async (req, res) => {
       [id]
     );
     if (result.rows.length === 0) {
-      return res.status(404).json(ApiResponse.fail(res.statusCode, "Student not found"));
+      return res
+        .status(404)
+        .json(ApiResponse.fail(res.statusCode, "Student not found"));
     }
     res
       .status(200)
       .json(
-        ApiResponse.success(
-          result.rows[0],
-          "Student retrieved successfully"
-        )
+        ApiResponse.success(result.rows[0], "Student retrieved successfully")
       );
   } catch (error) {
     res.status(500).json(ApiResponse.error(500, error.message));
