@@ -1,4 +1,5 @@
 const { Pool } = require('pg');
+const ApiResponse = require('../Response');
 require('dotenv').config();
 
 const pool = new Pool({
@@ -12,7 +13,9 @@ const pool = new Pool({
 const getCourses = async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM courses');
-    res.status(200).json(result.rows);
+    res
+      .status(200)
+      .json(ApiResponse.success(result.rows, "Courses retrived successfully"));
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
