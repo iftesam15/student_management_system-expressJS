@@ -18,6 +18,7 @@ SELECT
   courses.course_name,
   instructors.first_name AS instructor_first_name,
   instructors.last_name AS instructor_last_name,
+  instructors.instructor_id AS instructor_id,
   enrollments.enrollment_date
 FROM
   enrollments
@@ -36,7 +37,10 @@ ORDER BY enrollments.enrollment_date DESC;
         enrollment_date: row.enrollment_date,
         student_full_name: row.student_full_name,
         course_name: row.course_name,
-        // instructor_full_name: row.instructor_full_name,
+        instructor_first_name: row.instructor_first_name,
+        instructor_last_name: row.instructor_last_name,
+        instructor_id: row.instructor_id,
+
       };
     });
     res.status(200).json({
@@ -51,7 +55,28 @@ ORDER BY enrollments.enrollment_date DESC;
     });
   }
 };
+const createEnrollment = async (req, res) => {
+  const { course_id, student_id, enrollment_date } = req.body;
+  try {
+    const result = await pool.query(
+      "INSERT INTO enrollments (course_id, student_id,enrollment_date) VALUES ($1, $2, $3) RETURNING course_id *"
+      [course_id, student_id, enrollment_date]
+
+    );
+    res.status(201).json({
+      status: "success",
+      data: result.rows[0],
+      message: "Enrollment created successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: "error",
+      message: error.message,
+    });
+  }
+}
 
 module.exports = {
   getEnrollmentDetails,
+  createEnrollment,
 };
