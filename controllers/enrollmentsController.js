@@ -56,12 +56,11 @@ ORDER BY enrollments.enrollment_date DESC;
   }
 };
 const createEnrollment = async (req, res) => {
-  const { course_id, student_id, enrollment_date } = req.body;
+  const { course_id, student_id, enrollment_date, instructor_id } = req.body;
   try {
     const result = await pool.query(
-      "INSERT INTO enrollments (course_id, student_id,enrollment_date) VALUES ($1, $2, $3) RETURNING course_id *"
-      [course_id, student_id, enrollment_date]
-
+      "INSERT INTO enrollments (course_id, student_id, enrollment_date, instructor_id) VALUES ($1, $2, $3, $4) RETURNING *", // Added a comma after the query string
+      [course_id, student_id, enrollment_date, instructor_id] // Array of parameters
     );
     res.status(201).json({
       status: "success",
@@ -74,7 +73,8 @@ const createEnrollment = async (req, res) => {
       message: error.message,
     });
   }
-}
+};
+
 
 module.exports = {
   getEnrollmentDetails,

@@ -33,14 +33,25 @@ const getCourseNames = async (req, res) => {
 const getInstructorByCourse = async (req, res) => {
   const { course_id } = req.params;
   try {
-    const result = await pool.query('SELECT instructor_id, instructor_name FROM instructors Join course_instructors on instructors.instructor_id=course_instructors.instructor_id WHERE course_id=$1', [course_id]);
+    const result = await pool.query(
+      `SELECT i.instructor_id, i.instructor_name 
+       FROM instructors i 
+       JOIN course_instructors ci 
+       ON i.instructor_id = ci.instructor_id 
+       WHERE ci.course_id = $1`,
+      [course_id]
+    );
+
+    const instructors = result.rows; // This is already an array
+
     res
       .status(200)
-      .json(ApiResponse.success(result.rows, "Instructors for this course retrived successfully"));
+      .json(ApiResponse.success(instructors, "Instructors for this course retrieved successfully"));
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-}
+};
+
 
 module.exports = {
   getCourses,
