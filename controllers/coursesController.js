@@ -31,18 +31,23 @@ const getCourseNames = async (req, res) => {
   }
 }
 const getInstructorByCourse = async (req, res) => {
-  const { course_id } = req.params;
+  console.log(req.params);
+
+  const { id } = req.params;
   try {
     const result = await pool.query(
-      `SELECT i.instructor_id, i.instructor_name 
-       FROM instructors i 
-       JOIN course_instructors ci 
-       ON i.instructor_id = ci.instructor_id 
-       WHERE ci.course_id = $1`,
-      [course_id]
+      `SELECT i.first_name, i.last_name
+FROM instructors i
+INNER JOIN course_instructors ci ON i.instructor_id = ci.instructor_id
+WHERE ci.course_id = $1`,
+      [id]
     );
+    console.log(result.rows);
 
-    const instructors = result.rows; // This is already an array
+
+    const instructors = result.rows;
+    console.log(instructors);
+    // This is already an array
 
     res
       .status(200)
