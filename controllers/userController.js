@@ -44,7 +44,7 @@ const forgetPassword = async (req, res) => {
     );
 
     // Send reset email
-    const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
+    const resetLink = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
     await transporter.sendMail({
       to: email,
       from: process.env.EMAIL_USER,
