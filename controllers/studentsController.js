@@ -81,7 +81,7 @@ const updateStudent = async (req, res) => {
   const { first_name, last_name, email } = req.body;
   try {
     const result = await pool.query(
-      "UPDATE students SET first_name = $1, last_name = $2, email = $3 WHERE student_id = $4 RETURNING *",
+      "UPDATE students SET first_name = $1, last_name = $2, email = $3 WHERE student_id = $4 RETURNING first_name, last_name, email",
       [first_name, last_name, email, id]
     );
     if (result.rows.length === 0) {
