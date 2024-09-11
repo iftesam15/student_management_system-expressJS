@@ -11,9 +11,11 @@ const pool = new Pool({
 });
 
 class Student {
-  constructor(firstName, lastName) {
+  constructor(firstName, lastName, date_of_birth, email) {
     this.firstName = firstName;
     this.lastName = lastName;
+    this.date_of_birth = date_of_birth;
+    this.email = email;
   }
 }
 
@@ -21,13 +23,23 @@ class Student {
 const getStudents = async (req, res) => {
   try {
     const result = await pool.query("SELECT * FROM students");
+
     const students = result.rows.map(
-      (row) => new Student(row.first_name, row.last_name)
+      (row) => {
+        ;
+        return new Student(
+          row.first_name,
+          row.last_name,
+          new Date(row.date_of_birth).toLocaleDateString('en-US'),
+          row.email
+        );
+
+      }
     );
     res
       .status(200)
       .json(
-        ApiResponse.success(result.rows, "Students retrieved successfully")
+        ApiResponse.success(students, "Students retrieved successfully")
       );
   } catch (error) {
     res.status(500).json(ApiResponse.error(500, error.message));

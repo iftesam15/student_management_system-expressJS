@@ -19,7 +19,7 @@ app.use(bodyParser.json());
 app.use('/courses', coursesRoutes);
 app.use('/enrollments', enrollmentsRoutes);
 app.use('/students', studentsRoutes);
-app.use('/instructors',instructorRoutes);
+app.use('/instructors', instructorRoutes);
 app.use('/users', userRoutes);
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
