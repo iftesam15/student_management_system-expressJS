@@ -11,7 +11,8 @@ const pool = new Pool({
 });
 
 class Student {
-  constructor(firstName, lastName, date_of_birth, email) {
+  constructor(student_id, firstName, lastName, date_of_birth, email,) {
+    this.student_id = student_id
     this.firstName = firstName;
     this.lastName = lastName;
     this.date_of_birth = date_of_birth;
@@ -28,6 +29,7 @@ const getStudents = async (req, res) => {
       (row) => {
         ;
         return new Student(
+          row.student_id,
           row.first_name,
           row.last_name,
           new Date(row.date_of_birth).toLocaleDateString('en-US'),

@@ -36,7 +36,7 @@ const getInstructorByCourse = async (req, res) => {
   const { id } = req.params;
   try {
     const result = await pool.query(
-      `SELECT i.first_name, i.last_name
+      `SELECT i.instructor_id,i.first_name, i.last_name
        FROM instructors i
        INNER JOIN course_instructors ci ON i.instructor_id = ci.instructor_id
        WHERE ci.course_id = $1`,

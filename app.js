@@ -4,6 +4,7 @@ const coursesRoutes = require('./routes/coursesRoutes');
 const enrollmentsRoutes = require('./routes/enrollmentsRoutes');
 const studentsRoutes = require('./routes/studentsRoutes');
 const instructorRoutes = require('./routes/instructorRoutes');
+const headDepartmentRoutes = require('./routes/headDepartmentRoutes');
 const userRoutes = require('./routes/userRoutes');
 const bodyParser = require('body-parser');
 require('dotenv').config();
@@ -21,6 +22,7 @@ app.use('/enrollments', enrollmentsRoutes);
 app.use('/students', studentsRoutes);
 app.use('/instructors', instructorRoutes);
 app.use('/users', userRoutes);
+app.use('/head_department', headDepartmentRoutes);
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
