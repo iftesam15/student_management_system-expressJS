@@ -62,9 +62,35 @@ const updateHeadDepartments = async (req, res) => {
         res.status(500).json(ApiResponse.error(null, error.message));
     }
 }
+const deleteHeadDeparments = async (req, res) => {
+    const { id } = req.params;
+    if (!id) {
+        return res.status(400).json({
+            status: "error",
+            message: "Missing head department ID",
+        });
+    }
+    const query = `
+    DELETE FROM head_departments WHERE head_department_id = $1
+    RETURNING *`;
+    try {
+        const result = await pool.query(query, [id]);
+        if (result.rows.length === 0) {
+            return res.status(404).json(ApiResponse.fail(404, "Head department not found"));
+        }
+        res.status(200).json(ApiResponse.success(result.rows[0], "Head department deleted successfully"));
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            status: "error",
+            message: error.message,
+        });
+    }
+}
 module.exports = {
     getHeadDepartments,
     createHeadDepartments,
     getHeadDepartmentsById,
-    updateHeadDepartments
-}
+    updateHeadDepartments,
+    deleteHeadDeparments,
+};
