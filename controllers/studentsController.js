@@ -11,8 +11,8 @@ const pool = new Pool({
 });
 
 class Student {
-  constructor(student_id, firstName, lastName, date_of_birth, email,) {
-    this.student_id = student_id
+  constructor(student_id, firstName, lastName, date_of_birth, email) {
+    this.student_id = student_id;
     this.firstName = firstName;
     this.lastName = lastName;
     this.date_of_birth = date_of_birth;
@@ -25,24 +25,18 @@ const getStudents = async (req, res) => {
   try {
     const result = await pool.query("SELECT * FROM students");
 
-    const students = result.rows.map(
-      (row) => {
-        ;
-        return new Student(
-          row.student_id,
-          row.first_name,
-          row.last_name,
-          new Date(row.date_of_birth).toLocaleDateString('en-US'),
-          row.email
-        );
-
-      }
-    );
+    const students = result.rows.map((row) => {
+      return new Student(
+        row.student_id,
+        row.first_name,
+        row.last_name,
+        new Date(row.date_of_birth).toLocaleDateString("en-US"),
+        row.email
+      );
+    });
     res
       .status(200)
-      .json(
-        ApiResponse.success(students, "Students retrieved successfully")
-      );
+      .json(ApiResponse.success(students, "Students retrieved successfully"));
   } catch (error) {
     res.status(500).json(ApiResponse.error(500, error.message));
   }
@@ -124,7 +118,9 @@ const deleteStudent = async (req, res) => {
     }
     res
       .status(200)
-      .json(ApiResponse.success(result.rows[0], "Student deleted successfully"));
+      .json(
+        ApiResponse.success(result.rows[0], "Student deleted successfully")
+      );
   } catch (error) {
     res.status(500).json(ApiResponse.error(500, error.message));
   }
