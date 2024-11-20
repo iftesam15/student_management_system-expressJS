@@ -1,13 +1,5 @@
-const { Pool } = require("pg");
+const pool = require("../db/db");
 require("dotenv").config();
-
-const pool = new Pool({
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-});
 
 // Get all enrollments with details
 const getEnrollmentDetails = async (req, res) => {
@@ -40,7 +32,6 @@ ORDER BY enrollments.enrollment_date DESC;
         instructor_first_name: row.instructor_first_name,
         instructor_last_name: row.instructor_last_name,
         instructor_id: row.instructor_id,
-
       };
     });
     res.status(200).json({
@@ -74,7 +65,6 @@ const createEnrollment = async (req, res) => {
     });
   }
 };
-
 
 module.exports = {
   getEnrollmentDetails,

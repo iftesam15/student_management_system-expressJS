@@ -1,20 +1,13 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const { validationResult } = require("express-validator");
-const { Pool } = require("pg");
+const pool = require("../db/db");
 
 // mail api's
 const nodemailer = require("nodemailer");
-const crypto = require("crypto")
+const crypto = require("crypto");
 
 const authMiddleware = require("../middlewares/auth-middleware");
-const pool = new Pool({
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-});
 
 // mail api's
 const transporter = nodemailer.createTransport({
@@ -28,7 +21,9 @@ const forgetPassword = async (req, res) => {
   const { email } = req.body;
 
   try {
-    const user = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
+    const user = await pool.query("SELECT * FROM users WHERE email = $1", [
+      email,
+    ]);
 
     if (user.rows.length === 0) {
       return res.status(404).json({ message: "User not found" });
@@ -52,7 +47,9 @@ const forgetPassword = async (req, res) => {
       html: `<p>Click <a href="${resetLink}">here</a> to reset your password. This link will expire in 1 hour.</p>`,
     });
 
-    res.status(200).json({ message: "Password reset email sent", link: resetLink, });
+    res
+      .status(200)
+      .json({ message: "Password reset email sent", link: resetLink });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: error.message });
@@ -62,7 +59,10 @@ const resetPassword = async (req, res) => {
   const { token, newPassword } = req.body;
 
   try {
-    const user = await pool.query("SELECT * FROM users WHERE reset_token = $1 AND reset_token_expiry > NOW()", [token]);
+    const user = await pool.query(
+      "SELECT * FROM users WHERE reset_token = $1 AND reset_token_expiry > NOW()",
+      [token]
+    );
 
     if (user.rows.length === 0) {
       return res.status(400).json({ message: "Invalid or expired token" });
@@ -80,8 +80,6 @@ const resetPassword = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
-
 
 // User Registration
 const registerUser = async (req, res) => {
@@ -187,7 +185,9 @@ const getUserInfo = async (req, res) => {
 const getAllUsers = async (req, res) => {
   try {
     const users = await pool.query("SELECT * FROM users");
-    const usersWithoutPassword = users.rows.map(({ password, ...rest }) => rest);
+    const usersWithoutPassword = users.rows.map(
+      ({ password, ...rest }) => rest
+    );
     res.status(200).json(usersWithoutPassword);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -206,7 +206,6 @@ const getAllUsers = async (req, res) => {
 //   }
 // };
 
-
 // Reset password and forget password
 // const forgetPassword = async (req, res) => {
 //   try {
@@ -221,7 +220,6 @@ const getAllUsers = async (req, res) => {
 //   }
 
 // }
-
 
 module.exports = {
   registerUser,
