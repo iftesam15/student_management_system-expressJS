@@ -60,6 +60,13 @@ const getStudentById = async (req, res) => {
 // Create a new student
 const createStudent = async (req, res) => {
   const { first_name, last_name, date_of_birth, email } = req.body;
+  if (!first_name || !last_name || !email || !date_of_birth) {
+    return res.status(400).json({
+      status: "fail",
+      message: "Required Field Missing",
+    });
+  }
+
   try {
     const result = await pool.query(
       "INSERT INTO students (first_name, last_name, date_of_birth, email) VALUES ($1, $2, $3, $4) RETURNING *",
@@ -78,11 +85,11 @@ const createStudent = async (req, res) => {
 // Update a student
 const updateStudent = async (req, res) => {
   const { id } = req.params;
-  const { first_name, last_name, email } = req.body;
+  const { first_name, last_name, email, date_of_birth } = req.body;
   try {
     const result = await pool.query(
-      "UPDATE students SET first_name = $1, last_name = $2, email = $3 WHERE student_id = $4 RETURNING first_name, last_name, email",
-      [first_name, last_name, email, id]
+      "UPDATE students SET first_name = $1, last_name = $2, email = $3,date_of_birth= $4 WHERE student_id = $5 RETURNING first_name, last_name, email,date_of_birth",
+      [first_name, last_name, email, date_of_birth, id]
     );
     if (result.rows.length === 0) {
       return res.status(404).json(ApiResponse.fail(null, "Student not found"));
